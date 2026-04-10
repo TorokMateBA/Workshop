@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Context Engineering</title>
+    <style>
+        /* Alapvető beállítások és reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body,
+        html {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            height: 100%;
+            overflow: hidden;
+            /* A fő görgetést a container veszi át */
+        }
+
+        /* Görgethető container a szekciókhoz */
+        .main-container {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            /* Szakaszos görgetés */
+            scroll-behavior: smooth;
+        }
+
+        /* Görgősáv formázása a bal panelhez és a fő containerhez */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #888;
+        }
+
+        /* Egy szekció (teljes képernyő) */
+        .section {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            scroll-snap-align: start;
+            position: relative;
+        }
+
+        /* Bal oldali szöveges panel */
+        .left-pane {
+            width: 55%;
+            background-color: #1a1a1a;
+            padding: 4rem 5%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
+            /* Ha sok a szöveg, görgethető legyen */
+        }
+
+        /* Jobb oldali képpanel */
+        .right-pane {
+            width: 45%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image 0.5s ease-in-out;
+        }
+
+        /* Tipográfia */
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: #4da6ff;
+            /* Kiemelő szín */
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #e0e0e0;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            color: #b3b3b3;
+        }
+
+        p,
+        li {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            color: #cccccc;
+        }
+
+        ul {
+            margin-left: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        strong {
+            color: #ffffff;
+        }
+
+        /* Slideshow stílusok */
+        .slide {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .controls {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        button {
+            background-color: #4da6ff;
+            color: #121212;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #3388dd;
+        }
+
+        button:disabled {
+            background-color: #555;
+            color: #888;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            font-size: 1rem;
+            color: #888;
+        }
+
+        /* Statikus szekciók (3. és 4.) */
+        .static-content {
+            justify-content: flex-start;
+            padding-top: 6rem;
+            padding-bottom: 6rem;
+        }
+
+        .static-item {
+            margin-bottom: 2.5rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="main-container">
+
+        <!-- 1. SZEKCIÓ: Alapozás és Definíciók (Slideshow) -->
+        <div class="section" id="section1">
+            <div class="left-pane slideshow-container" id="slideshow1">
+                <h1>1. SZEKCIÓ: Alapozás és Definíciók</h1>
+
+                <!-- 1. Slide -->
+                <div class="slide active" data-image="s1s1.png">
+                    <h2>Mi az a Context Engineering?</h2>
+                    <ul>
+                        <li>Ez a gyakorlat arra irányul, hogy a specifikus ágens-rendszer lépéseihez a lehető legkisebb
+                            mennyiségű, fókuszált kontextust biztosítsuk a feladat elvégzéséhez.</li>
+                        <li>A hagyományos „Prompt Engineering” valójában a kontextus-mérnökség egy részhalmaza.</li>
+                    </ul>
+                </div>
+
+                <!-- 2. Slide -->
+                <div class="slide" data-image="s1s2.png">
+                    <h2>Az Ágens-rendszerek Topológiája:</h2>
+                    <ul>
+                        <li>Az ágens-rendszer különböző mintázatokkal összekapcsolt LLM-hívások topológiája (iterációs
+                            hurkok vagy szekvenciális minták).</li>
+                        <li>Minden LLM-csomópont kimenete befolyásolja a rendszer következő lépéseit.</li>
+                    </ul>
+                </div>
+
+                <!-- 3. Slide -->
+                <div class="slide" data-image="s1s3.png">
+                    <h2>A minőség záloga:</h2>
+                    <ul>
+                        <li>Az ágens minősége csak annyira jó, amennyire az egyes lépéseknél az LLM-nek átadott
+                            kontextus.</li>
+                        <li>A végtelenül táguló kontextusablakok nem jelentenek megoldást az alapvető problémákra.</li>
+                    </ul>
+                </div>
+
+                <!-- Kontroll gombok -->
+                <div class="controls">
+                    <button class="prev-btn">Előző</button>
+                    <button class="next-btn">Következő</button>
+                    <span class="slide-counter"><span class="current-slide">1</span> / <span
+                            class="total-slides">3</span></span>
+                </div>
+            </div>
+
+            <!-- Jobb oldali kép tárolója -->
+            <div class="right-pane" id="bg1" style="background-image: url('s1s1.png');"></div>
+        </div>
+
+
+        <!-- 2. SZEKCIÓ: A túlzott adatmennyiség veszélyei (Slideshow) -->
+        <div class="section" id="section2">
+            <div class="left-pane slideshow-container" id="slideshow2">
+                <h1>2. SZEKCIÓ: A túlzott adatmennyiség veszélyei</h1>
+
+                <!-- 1. Slide -->
+                <div class="slide active" data-image="s2s1.png">
+                    <h2>A modell összezavarodása (Confusion Modes):</h2>
+                    <ul>
+                        <li><strong>Context Poisoning:</strong> Hallucinációk kerülnek a kontextusba.</li>
+                        <li><strong>Context Distraction:</strong> A túl sok adat elnyomja a modell tanítását.</li>
+                        <li><strong>Context Confusion:</strong> Felesleges információk befolyásolják a választ.</li>
+                        <li><strong>Context Clash:</strong> A kontextus részei ellentmondanak egymásnak.</li>
+                    </ul>
+                </div>
+
+                <!-- 2. Slide -->
+                <div class="slide" data-image="s2s2.png">
+                    <h2>Teljesítménybeli korlátok:</h2>
+                    <ul>
+                        <li><strong>Véges figyelmi keret (Attention Budget):</strong> Minden token versenyzik a modell
+                            figyelméért.</li>
+                        <li><strong>Precision Drop:</strong> A kontextus növekedésével csökken a precizitás és gyengül a
+                            következtetési képesség.</li>
+                        <li><strong>„Lost-in-the-middle” & „Needle in a haystack”:</strong> A modell hajlamos
+                            elveszíteni a középen lévő információkat, vagy nem találja meg a fontos részletet a zajban.
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 3. Slide -->
+                <div class="slide" data-image="s2s3.png">
+                    <h2>Operatív és biztonsági kockázatok:</h2>
+                    <ul>
+                        <li><strong>Displacement:</strong> A túl sok adat kiszoríthatja a kritikus rendszerutasításokat.
+                        </li>
+                        <li><strong>Context Drift:</strong> Hosszú interakciók során a modell elveszíti a fókuszt az
+                            eredeti szándékról.</li>
+                        <li><strong>Prompt Injection:</strong> A külső forrásokból (pl. URL) beolvasott adatok
+                            rosszindulatú utasításokat tartalmazhatnak.</li>
+                        <li><strong>Költség és Latencia:</strong> A több token növeli a válaszadási időt és a működési
+                            költségeket.</li>
+                    </ul>
+                </div>
+
+                <!-- Kontroll gombok -->
+                <div class="controls">
+                    <button class="prev-btn">Előző</button>
+                    <button class="next-btn">Következő</button>
+                    <span class="slide-counter"><span class="current-slide">1</span> / <span
+                            class="total-slides">3</span></span>
+                </div>
+            </div>
+
+            <!-- Jobb oldali kép tárolója -->
+            <div class="right-pane" id="bg2" style="background-image: url('s2s1.png');"></div>
+        </div>
+
+
+        <!-- 3. SZEKCIÓ: A kontextus típusai (Nincs slideshow, minden egy oldalon) -->
+        <div class="section" id="section3">
+            <div class="left-pane static-content">
+                <h1>3. SZEKCIÓ: A kontextus típusai</h1>
+
+                <div class="static-item">
+                    <h2>1. Rendszerutasítások (System Prompt):</h2>
+                    <p>Meghatározzák a szerepkört, viselkedést és határokat. Korlátok: illeszkedési (alignment)
+                        problémák és az injektálás kockázata.</p>
+                </div>
+
+                <div class="static-item">
+                    <h2>2. Felhasználói Prompt (User Prompt):</h2>
+                    <p>A közvetlen kérés. Kihívás: a valódi szándék megértése több lépésből álló feladatoknál.</p>
+                </div>
+
+                <div class="static-item">
+                    <h2>3. Beolvasott adatok (Retrieved Context):</h2>
+                    <p>Külső forrásokból (RAG) származó adatok. Kihívás: a legrelevánsabb információk kiválasztása a
+                        hatalmas tudásbázisból.</p>
+                </div>
+
+                <div class="static-item">
+                    <h2>4. Rövid távú memória (State):</h2>
+                    <p>A „munkamemória”, az aktuális session legfrissebb állapota és előzményei. Korlátja a véges
+                        kontextusablak.</p>
+                </div>
+
+                <div class="static-item">
+                    <h2>5. Hosszú távú memória:</h2>
+                    <ul>
+                        <li><strong>Epizodikus:</strong> Korábbi interakciók és akciók.</li>
+                        <li><strong>Szemantikus:</strong> Külső ismeretek és az ágens önismerete.</li>
+                        <li><strong>Procedurális:</strong> Rendszerutasítások, eszközök sémái és korlátok.</li>
+                    </ul>
+                </div>
+
+                <div class="static-item">
+                    <h2>6. Eszközök (Tools):</h2>
+                    <p>Eszközdefiníciók (JSON sémák) és az eszközök kimenetei. Kihívás: a definíciók rengeteg tokent
+                        fogyasztanak (90 eszköz > 50 000 token).</p>
+                </div>
+
+                <div class="static-item">
+                    <h2>7. Strukturált kimenet (Structured Output):</h2>
+                    <p>JSON vagy SQL formátumok biztosítása a láncolt feladatokhoz. Segítő eszközök: Instructor
+                        könyvtár.</p>
+                </div>
+            </div>
+
+            <!-- Jobb oldali kép (Statikus, egy darab) -->
+            <div class="right-pane" style="background-image: url('s3s1.png');">
+            </div>
+        </div>
+
+
+        <!-- 4. SZEKCIÓ: Megoldási minták (Slideshow) -->
+        <div class="section" id="section4">
+            <div class="left-pane slideshow-container" id="slideshow4">
+                <h1>4. SZEKCIÓ: Megoldási minták (Context Engineering Patterns)</h1>
+
+                <!-- 1. Slide -->
+                <div class="slide active" data-image="s4s1.png">
+                    <h2>Pattern 1: Progressive Disclosure (Fokozatos közzététel):</h2>
+                    <ul>
+                        <li>Az információkat relevanciájuk alapján szintezzük (Discovery -> Activation -> Execution).
+                        </li>
+                        <li><strong>Agent Skills:</strong> Markdown fájlok, ahol csak a név és leírás töltődik be
+                            induláskor, a teljes leírás csak szükség esetén.</li>
+                    </ul>
+                </div>
+
+                <!-- 2. Slide -->
+                <div class="slide" data-image="s4s2.png">
+                    <h2>Pattern 2: Context Compression (Tömörítés):</h2>
+                    <ul>
+                        <li><strong>Sliding Window:</strong> Csak az utolsó N kört tartja meg nyersen, a többit LLM-mel
+                            összegezi.</li>
+                        <li><strong>Szelektív megtartás:</strong> Az eszközhívások ritmusát és a hibaüzeneteket (error
+                            traces) érdemes megőrizni.</li>
+                    </ul>
+                </div>
+
+                <!-- 3. Slide -->
+                <div class="slide" data-image="s4s3.png">
+                    <h2>Pattern 3: Context Routing (Irányítás):</h2>
+                    <p>A kérést még a kontextusba kerülés előtt osztályozza. Típusai: LLM-alapú, hierarchikus vagy
+                        szabályalapú irányítás.</p>
+                </div>
+
+                <!-- 4. Slide -->
+                <div class="slide" data-image="s4s4.png">
+                    <h2>Pattern 4: Retrieval Evolution (Fejlett RAG):</h2>
+                    <ul>
+                        <li><strong>Agentic RAG:</strong> Az ágens kontrollálja a keresési stratégiát.</li>
+                        <li><strong>Graph RAG:</strong> Kapcsolati összefüggések keresése dokumentumok között.</li>
+                        <li><strong>Self-RAG:</strong> A modell kritikusan értékeli saját kimeneteit és a retrieved
+                            adatokat.</li>
+                    </ul>
+                </div>
+
+                <!-- 5. Slide -->
+                <div class="slide" data-image="s4s5.png">
+                    <h2>Pattern 5: Tool & Capability Management:</h2>
+                    <ul>
+                        <li><strong>MCP (Model Context Protocol):</strong> Standard az eszközök csatlakoztatására.</li>
+                        <li>Javaslat: Az eszközök számát érdemes ágensenként 20 alatt tartani a pontosság érdekében.
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Kontroll gombok -->
+                <div class="controls">
+                    <button class="prev-btn">Előző</button>
+                    <button class="next-btn">Következő</button>
+                    <span class="slide-counter"><span class="current-slide">1</span> / <span
+                            class="total-slides">5</span></span>
+                </div>
+            </div>
+
+            <!-- Jobb oldali kép tárolója -->
+            <div class="right-pane" id="bg4" style="background-image: url('s4s1.png');"></div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript a Slideshow működéséhez -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Megkeressük az összes slideshow konténert
+            const slideshows = document.querySelectorAll('.slideshow-container');
+
+            slideshows.forEach((container) => {
+                const slides = container.querySelectorAll('.slide');
+                const prevBtn = container.querySelector('.prev-btn');
+                const nextBtn = container.querySelector('.next-btn');
+                const currentSlideSpan = container.querySelector('.current-slide');
+
+                // Megkeressük a hozzá tartozó jobb oldali panelt (a szülő 'section' elemen belül)
+                const section = container.closest('.section');
+                const rightPane = section.querySelector('.right-pane');
+
+                let currentIndex = 0;
+
+                // Gombok állapotának frissítése
+                function updateButtons() {
+                    prevBtn.disabled = currentIndex === 0;
+                    nextBtn.disabled = currentIndex === slides.length - 1;
+                    currentSlideSpan.textContent = currentIndex + 1;
+                }
+
+                // Slide váltás logikája
+                function showSlide(index) {
+                    slides.forEach((slide, i) => {
+                        slide.classList.remove('active');
+                        if (i === index) {
+                            slide.classList.add('active');
+                            // Háttérkép frissítése a data-image attribútum alapján
+                            const newImage = slide.getAttribute('data-image');
+                            rightPane.style.backgroundImage = `url('${newImage}')`;
+                        }
+                    });
+                    updateButtons();
+                }
+
+                // Eseménykezelők a gombokra
+                prevBtn.addEventListener('click', () => {
+                    if (currentIndex > 0) {
+                        currentIndex--;
+                        showSlide(currentIndex);
+                    }
+                });
+
+                nextBtn.addEventListener('click', () => {
+                    if (currentIndex < slides.length - 1) {
+                        currentIndex++;
+                        showSlide(currentIndex);
+                    }
+                });
+
+                // Inicializálás
+                updateButtons();
+            });
+        });
+    </script>
+</body>
+
+</html>
